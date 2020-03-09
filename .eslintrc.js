@@ -62,6 +62,10 @@ module.exports = {
 
 		"max-len": ["error", { "code": 120 }],
 
+		"@typescript-eslint/explicit-function-return-type": ["error", { "allowHigherOrderFunctions": true }],
+
+		"@typescript-eslint/no-explicit-any": ["warn", { "ignoreRestArgs": false }],
+
 		"jsx-quotes": [
 
 			"error",

@@ -1,38 +1,21 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from 'styled-components';
+import GlobalStyle from './GlobalStyle';
 
-type Props = {
-	a: (n: number) => number
-}
+import store from './Store';
+import MyHeroes from './components/MyHeroes/MyHeroes';
 
-function App(props: Props): JSX.Element {
-	const { a } = props;
-	const [value] = useState<number[]>([]);
-	a(value?.[2]);
-	let abc = 1;
-	function func(v?: number) {
-		a(v!++ + abc);
-	}
-	func();
-	const c = 1;
+const theme = require('@rebass/preset').default;
+
+function App(): JSX.Element {
 	return (
-		<div className="App">
-			<header className="App-header">
-				<img src={ logo } className="App-logo" alt="logo" />
-				<p>
-					Edit <code>src/App.tsx</code> and save to reload.
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-			</header>
-		</div>
+		<Provider store={ store }>
+			<ThemeProvider theme={ theme }>
+				<GlobalStyle />
+				<MyHeroes />
+			</ThemeProvider>
+		</Provider>
 	);
 }
 
