@@ -21,13 +21,13 @@ type SetProfileAction = Action<typeof SET_PROFILE, { heroId: number, profile: He
 
 type HeroActionTypes = SetHeroesAction | SetProfileAction;
 
-// export function fetchHeroes() {
-// 	return async (disptach: Dispatch): Promise<void> => {
-// 		const response = await fetch('https://hahow-recruit.herokuapp.com/heroes');
-// 		const heroes = await response.json();
-// 		disptach(setHeroes(heroes));
-// 	};
-// }
+export function fetchHeroes() {
+	return async (disptach: Dispatch): Promise<void> => {
+		const response = await fetch('https://hahow-recruit.herokuapp.com/heroes');
+		const heroes = await response.json();
+		disptach(setHeroes(heroes));
+	};
+}
 
 export function setHeroes(heroes: HeroData[]): SetHeroesAction {
 	return {

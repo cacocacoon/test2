@@ -1,10 +1,10 @@
-import React, { lazy } from 'react';
+import React from 'react';
 import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
 import MyHeroesBox from './styled/MyHeroesBox';
 import MyHeroesHeading from './styled/MyHeroesHead';
 import HeroCards from '../HeroCards/HeroCards';
-const HeroProfile = lazy(() => import('../HeroProfile/HeroProfile'));
+import HeroProfile from '../HeroProfile/HeroProfile';
 
 export default function MyHeroes(): JSX.Element {
 	return (
