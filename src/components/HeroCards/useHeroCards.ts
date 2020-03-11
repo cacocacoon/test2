@@ -1,10 +1,10 @@
 import useSWR from 'swr';
-import { HeroData } from '../../api/responseType';
+import { HeroResponse } from '../../api/responseType';
 import { HEROES } from '../../api/key';
 import { heroListFetcher } from '../../api/fetcher';
 
 type UseHeroesCardsType = {
-	heroes: HeroData[],
+	heroes: HeroResponse[],
 	loading: boolean
 }
 

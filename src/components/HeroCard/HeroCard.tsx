@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react';
 import { Card, Image, Text } from 'rebass';
 import { Link } from 'react-router-dom';
-import { HeroData } from '../../api/responseType';
+import { HeroResponse } from '../../api/responseType';
 
 type Props  = {
-	hero: HeroData
+	hero: HeroResponse
 };
 
 export default function HeroCard(props: Props): JSX.Element {

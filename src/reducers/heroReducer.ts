@@ -1,10 +1,12 @@
 import { Dispatch } from 'redux';
 import { Action } from './actionTypes';
-import { HeroData, HeroProfileData } from '../api/responseType';
+import { HeroResponse, HeroProfileResponse } from '../api/responseType';
+
+export type ProfileWithMaxPoints = HeroProfileResponse & { maxPoints: number };
 
 type State = {
-	list: HeroData[],
-	profiles: { [key: string]: HeroProfileData }
+	list: HeroResponse[],
+	profiles: { [key: string]: ProfileWithMaxPoints }
 };
 
 const initState: State = {
@@ -15,9 +17,9 @@ const initState: State = {
 const SET_HEROES = 'SET_HEROES';
 const SET_PROFILE = 'SET_PROFILE';
 
-type SetHeroesAction = Action<typeof SET_HEROES, { heroes: HeroData[] }>;
+type SetHeroesAction = Action<typeof SET_HEROES, { heroes: HeroResponse[] }>;
 
-type SetProfileAction = Action<typeof SET_PROFILE, { heroId: number, profile: HeroProfileData }>;
+type SetProfileAction = Action<typeof SET_PROFILE, { heroId: string, profile: HeroProfileResponse }>;
 
 type HeroActionTypes = SetHeroesAction | SetProfileAction;
 
@@ -29,14 +31,14 @@ export function fetchHeroes() {
 	};
 }
 
-export function setHeroes(heroes: HeroData[]): SetHeroesAction {
+export function setHeroes(heroes: HeroResponse[]): SetHeroesAction {
 	return {
 		type: SET_HEROES,
 		payload: { heroes }
 	};
 }
 
-export function fetchHeroProfile(heroId: number) {
+export function fetchHeroProfile(heroId: string) {
 	return async (disptach: Dispatch): Promise<void> => {
 		const response = await fetch(`https://hahow-recruit.herokuapp.com/heroes/${ heroId }/profile`);
 		const profile = await response.json();
@@ -46,14 +48,14 @@ export function fetchHeroProfile(heroId: number) {
 	};
 }
 
-export function setProfile(heroId: number, profile: HeroProfileData): SetProfileAction {
+export function setProfile(heroId: string, profile: HeroProfileResponse): SetProfileAction {
 	return {
 		type: SET_PROFILE,
 		payload: { heroId, profile }
 	};
 }
 
-export function patchHeroProfile(heroId: number, profile: HeroProfileData) {
+export function patchHeroProfile(heroId: number, profile: HeroProfileResponse) {
 	return async (): Promise<String> => {
 		const response = await fetch(`https://hahow-recruit.herokuapp.com/heroes/${ heroId }/profile`, {
 			method: 'PATCH',
@@ -72,11 +74,16 @@ export default function heroReducer(state = initState, action: HeroActionTypes):
 	case SET_HEROES:
 		return { ...state, list: action.payload.heroes };
 	case SET_PROFILE:
+		const profile = action.payload.profile;
+		const maxPoints = Object.values(profile).reduce((accu, v) => accu + v, 0);
 		return {
 			...state,
 			profiles: {
 				...state.profiles,
-				[action.payload.heroId]: action.payload.profile
+				[action.payload.heroId]: {
+					maxPoints,
+					...action.payload.profile
+				}
 			}
 		};
 	default:
