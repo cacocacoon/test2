@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Flex, Text, Button } from 'rebass';
 import useHeroProfile from './useHeroProfile';
+import Ablility from './styled/Ablility';
 
 enum ABILITIES_TYPE {
 	STR = 'str',
@@ -10,14 +11,14 @@ enum ABILITIES_TYPE {
 	LUK = 'luk'
 }
 
-const ABILITIES = Object.values(ABILITIES_TYPE);;
-console.log(ABILITIES);
+const ABILITIES = Object.values(ABILITIES_TYPE);
+
 export default function HeroProfile(): JSX.Element {
 	const { heroId } = useParams();
-	const { profile, error, loading } = useHeroProfile(heroId);
+	const { profile, loading } = useHeroProfile(heroId);
 
-	if (error) {
-		return <span>error</span>;
+	if (loading) {
+		return <span>loading...</span>;
 	}
 
 	const remainingPoints = profile.maxPoints - ABILITIES.reduce((accu, key) => accu + profile[key], 0);
@@ -25,9 +26,6 @@ export default function HeroProfile(): JSX.Element {
 	return (
 		<>
 			<hr />
-			{ loading && (
-				<span>loading...</span>
-			) }
 			<Flex>
 				<Box width={ 1 / 2 }>
 					{ ABILITIES.map(ability => (
@@ -39,29 +37,11 @@ export default function HeroProfile(): JSX.Element {
 						/>
 					)) }
 				</Box>
-				<Box width={ 1 / 2 }>
-					2
-				</Box>
+				<Flex width={ 1 / 2 } flexDirection="column" alignItems="flex-end" justifyContent="flex-end">
+					<Text>剩餘點數：{ remainingPoints }</Text>
+					<Button backgroundColor="#0275ff">儲存</Button>
+				</Flex>
 			</Flex>
 		</>
-	);
-}
-
-type AblilityProps = {
-	ability: string,
-	point: number,
-	remainingPoints: number
-}
-
-function Ablility(props: AblilityProps): JSX.Element {
-	const { ability, point, remainingPoints } = props;
-
-	return (
-		<Flex justifyContent="center" alignItems="center" height={ 50 }>
-			<Text>{ ability.toUpperCase() }</Text>
-			<Button backgroundColor="#0275ff" disabled>+</Button>
-			<Text>{ point }</Text>
-			<Button backgroundColor="#0275ff">-</Button>
-		</Flex>
 	);
 }
