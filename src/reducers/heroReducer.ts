@@ -1,12 +1,13 @@
-import { Dispatch } from 'redux';
 import { Action } from './actionTypes';
 import { HeroResponse, HeroProfileResponse } from '../api/responseType';
+import { heroProfileFetcher, heroListFetcher } from '../api/fetcher';
+import { AppDispatch } from '../Store';
 
 export type ProfileWithMaxPoints = HeroProfileResponse & { maxPoints: number };
 
 type State = {
 	list: HeroResponse[],
-	profiles: { [key: string]: ProfileWithMaxPoints }
+	profiles: { [key: string]: HeroProfileResponse }
 };
 
 const initState: State = {
@@ -24,10 +25,9 @@ type SetProfileAction = Action<typeof SET_PROFILE, { heroId: string, profile: He
 type HeroActionTypes = SetHeroesAction | SetProfileAction;
 
 export function fetchHeroes() {
-	return async (disptach: Dispatch): Promise<void> => {
-		const response = await fetch('https://hahow-recruit.herokuapp.com/heroes');
-		const heroes = await response.json();
-		disptach(setHeroes(heroes));
+	return async (): Promise<HeroResponse[]> => {
+		const { data } = await heroListFetcher();
+		return data;
 	};
 }
 
@@ -39,16 +39,20 @@ export function setHeroes(heroes: HeroResponse[]): SetHeroesAction {
 }
 
 export function fetchHeroProfile(heroId: string) {
-	return async (disptach: Dispatch): Promise<void> => {
-		const response = await fetch(`https://hahow-recruit.herokuapp.com/heroes/${ heroId }/profile`);
-		const profile = await response.json();
-		const maxPoints = Object.values<number>(profile).reduce((accu: number, v: number) => accu + v, 0);
-		profile.maxPoints = maxPoints;
-		disptach(setProfile(heroId, profile));
+	return async (disptach: AppDispatch): Promise<ProfileWithMaxPoints> => {
+		const { data } = await heroProfileFetcher(heroId);
+		const maxPoints = Object.values<number>(data).reduce((accu: number, v: number) => accu + v, 0);
+		const profileWithMaxPoints: ProfileWithMaxPoints = {
+			...data,
+			maxPoints
+		};
+		disptach(setProfile(heroId, profileWithMaxPoints));
+
+		return profileWithMaxPoints;
 	};
 }
 
-export function setProfile(heroId: string, profile: HeroProfileResponse): SetProfileAction {
+export function setProfile(heroId: string, profile: ProfileWithMaxPoints): SetProfileAction {
 	return {
 		type: SET_PROFILE,
 		payload: { heroId, profile }
@@ -74,16 +78,11 @@ export default function heroReducer(state = initState, action: HeroActionTypes):
 	case SET_HEROES:
 		return { ...state, list: action.payload.heroes };
 	case SET_PROFILE:
-		const profile = action.payload.profile;
-		const maxPoints = Object.values(profile).reduce((accu, v) => accu + v, 0);
 		return {
 			...state,
 			profiles: {
 				...state.profiles,
-				[action.payload.heroId]: {
-					maxPoints,
-					...action.payload.profile
-				}
+				[action.payload.heroId]: action.payload.profile
 			}
 		};
 	default:

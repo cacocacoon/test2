@@ -12,9 +12,9 @@ export default function Ablility(props: AblilityProps): JSX.Element {
 
 	return (
 		<Flex justifyContent="space-around" alignItems="center" height={ 50 }>
-			<Text width={ 40 }>{ ability.toUpperCase() }</Text>
+			<Text width={ 40 } textAlign="center">{ ability.toUpperCase() }</Text>
 			<CircleButton>+</CircleButton>
-			<Text width={ 40 }>{ point }</Text>
+			<Text width={ 40 } textAlign="center">{ point }</Text>
 			<CircleButton>-</CircleButton>
 		</Flex>
 	);

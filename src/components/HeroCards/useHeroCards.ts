@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { HeroResponse } from '../../api/responseType';
 import { HEROES } from '../../api/key';
-import { heroListFetcher } from '../../api/fetcher';
+import { fetchHeroes } from '../../reducers/heroReducer';
 
 type UseHeroesCardsType = {
 	heroes: HeroResponse[],
@@ -9,8 +9,8 @@ type UseHeroesCardsType = {
 }
 
 export default function useHeroesCards(): UseHeroesCardsType {
-	const { data, isValidating } = useSWR(HEROES, heroListFetcher);
-	const heroes = data?.data ?? [];
+	const { data, isValidating } = useSWR(HEROES, fetchHeroes());
+	const heroes = data ?? [];
 
 	return { heroes, loading: isValidating || heroes.length === 0 };
 }
